@@ -40,11 +40,13 @@ jobs:
 
     - name: Verify build output
       run: |
+        echo "Contents of readline-install:"
         ls -la $GITHUB_WORKSPACE/readline-install
+        echo "Contents of readline-install/lib:"
         ls -la $GITHUB_WORKSPACE/readline-install/lib
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: readline-aarch64-apple-ios
-        path: $GITHUB_WORKSPACE/readline-install/lib/*.a
+        path: $GITHUB_WORKSPACE/readline-install/**

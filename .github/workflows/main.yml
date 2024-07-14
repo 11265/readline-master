@@ -1,0 +1,44 @@
+name: Build GNU Readline for aarch64-apple-ios
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Xcode tools
+      run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+
+    - name: Set up environment variables
+      run: |
+        export SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path)
+        export CC=$(xcrun --sdk iphoneos --find clang)
+        export CFLAGS="-arch arm64 -isysroot $SDKROOT"
+        export LDFLAGS="-arch arm64 -isysroot $SDKROOT"
+
+    - name: Download GNU Readline source
+      run: |
+        curl -O https://ftp.gnu.org/gnu/readline/readline-8.1.tar.gz
+        tar xzf readline-8.1.tar.gz
+        cd readline-8.1
+
+    - name: Configure and build GNU Readline
+      run: |
+        cd readline-8.1
+        ./configure --host=aarch64-apple-ios --prefix=$GITHUB_WORKSPACE/readline-install
+        make
+        make install
+
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: readline-aarch64-apple-ios
+        path: $GITHUB_WORKSPACE/readline-install

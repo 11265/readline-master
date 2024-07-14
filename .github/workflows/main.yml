@@ -19,20 +19,28 @@ jobs:
 
     - name: Set up environment variables
       run: |
-        export SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path)
-        export CC=$(xcrun --sdk iphoneos --find clang)
-        export CFLAGS="-arch arm64 -isysroot $SDKROOT"
-        export LDFLAGS="-arch arm64 -isysroot $SDKROOT"
-        echo "SDKROOT=$SDKROOT"
-        echo "CC=$CC"
+        echo "SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path)" >> $GITHUB_ENV
+        echo "CC=$(xcrun --sdk iphoneos --find clang)" >> $GITHUB_ENV
+        echo 'CFLAGS=-arch arm64 -isysroot ${{ steps.vars.outputs.sdkroot }}' >> $GITHUB_ENV
+        echo 'LDFLAGS=-arch arm64 -isysroot ${{ steps.vars.outputs.sdkroot }}' >> $GITHUB_ENV
 
     - name: Download GNU Readline source
       run: |
         curl -O https://ftp.gnu.org/gnu/readline/readline-8.1.tar.gz
         tar xzf readline-8.1.tar.gz
 
+    - name: Debugging before configure
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Contents of current directory:"
+        ls -la
+        echo "Contents of $GITHUB_WORKSPACE:"
+        ls -la $GITHUB_WORKSPACE
+
     - name: Configure and build GNU Readline
       run: |
+        set -e
         cd readline-8.1
         ./configure --host=aarch64-apple-ios --disable-shared --enable-static --prefix=$GITHUB_WORKSPACE/readline-install
         make
@@ -44,6 +52,15 @@ jobs:
         ls -la $GITHUB_WORKSPACE/readline-install
         echo "Contents of readline-install/lib:"
         ls -la $GITHUB_WORKSPACE/readline-install/lib
+
+    - name: Debugging after build
+      run: |
+        echo "Current directory after build:"
+        pwd
+        echo "Contents of current directory after build:"
+        ls -la
+        echo "Contents of $GITHUB_WORKSPACE after build:"
+        ls -la $GITHUB_WORKSPACE
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v2

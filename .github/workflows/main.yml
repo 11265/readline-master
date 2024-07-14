@@ -49,7 +49,7 @@ jobs:
           file $GITHUB_WORKSPACE/readline-install/lib/libreadline.a
 
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v4  # Update to v4 here
+        uses: actions/upload-artifact@v4
         with:
           name: readline-aarch64-ios
           path: |

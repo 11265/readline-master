@@ -42,7 +42,7 @@ jobs:
       run: |
         set -e
         cd readline-8.1
-        ./configure --host=aarch64-apple-ios --disable-shared --enable-static --prefix=$GITHUB_WORKSPACE/readline-install
+        ./configure --host=aarch64-apple-ios --disable-shared --enable-static --prefix=$GITHUB_WORKSPACE/readline-install || (cat config.log && false)
         make
         make install
 

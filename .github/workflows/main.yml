@@ -47,6 +47,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: readline-aarch64-apple-ios
-        path: |
-          $GITHUB_WORKSPACE/readline-install/lib/libhistory.a
-          $GITHUB_WORKSPACE/readline-install/lib/libreadline.a
+        path: $GITHUB_WORKSPACE/readline-install/lib

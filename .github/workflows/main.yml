@@ -1,4 +1,4 @@
-name: Build GNU Readline for aarch64-apple-ios
+name: Build GNU Readline for iOS ARM64
 
 on:
   push:
@@ -11,42 +11,42 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Install Xcode tools
-      run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+      - name: Install Xcode tools
+        run: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
 
-    - name: Set up environment variables
-      run: |
-        export SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path)
-        export CC=$(xcrun --sdk iphoneos --find clang)
-        export CFLAGS="-arch arm64 -isysroot $SDKROOT"
-        export LDFLAGS="-arch arm64 -isysroot $SDKROOT"
-        echo "SDKROOT=$SDKROOT"
-        echo "CC=$CC"
+      - name: Set up environment variables
+        run: |
+          export SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path)
+          export CC=$(xcrun --sdk iphoneos --find clang)
+          export CFLAGS="-arch arm64 -isysroot $SDKROOT"
+          export LDFLAGS="-arch arm64 -isysroot $SDKROOT"
+          echo "SDKROOT=$SDKROOT"
+          echo "CC=$CC"
 
-    - name: Download GNU Readline source
-      run: |
-        curl -O https://ftp.gnu.org/gnu/readline/readline-8.1.tar.gz
-        tar xzf readline-8.1.tar.gz
+      - name: Download GNU Readline source
+        run: |
+          curl -O https://ftp.gnu.org/gnu/readline/readline-8.1.tar.gz
+          tar xzf readline-8.1.tar.gz
 
-    - name: Configure and build GNU Readline
-      run: |
-        cd readline-8.1
-        ./configure --host=aarch64-apple-ios --disable-shared --enable-static --prefix=$GITHUB_WORKSPACE/readline-install
-        make
-        make install
+      - name: Configure and build GNU Readline
+        run: |
+          cd readline-8.1
+          ./configure --host=aarch64-apple-darwin --disable-shared --enable-static --prefix=$GITHUB_WORKSPACE/readline-install
+          make
+          make install
 
-    - name: Verify build output
-      run: |
-        ls -la $GITHUB_WORKSPACE/readline-install
-        ls -la $GITHUB_WORKSPACE/readline-install/lib
+      - name: Verify build output
+        run: |
+          ls -la $GITHUB_WORKSPACE/readline-install
+          ls -la $GITHUB_WORKSPACE/readline-install/lib
 
-    - name: Archive build artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: readline-aarch64-apple-ios
-        path: |
-          ${{ github.workspace }}/readline-install/lib/libhistory.a
-          ${{ github.workspace }}/readline-install/lib/libreadline.a
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: readline-aarch64-ios
+          path: |
+            ${{ github.workspace }}/readline-install/lib/libhistory.a
+            ${{ github.workspace }}/readline-install/lib/libreadline.a

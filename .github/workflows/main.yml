@@ -23,6 +23,8 @@ jobs:
         export CC=$(xcrun --sdk iphoneos --find clang)
         export CFLAGS="-arch arm64 -isysroot $SDKROOT"
         export LDFLAGS="-arch arm64 -isysroot $SDKROOT"
+        echo "SDKROOT=$SDKROOT"
+        echo "CC=$CC"
 
     - name: Download GNU Readline source
       run: |
@@ -36,8 +38,13 @@ jobs:
         make
         make install
 
+    - name: Verify build output
+      run: |
+        ls -la $GITHUB_WORKSPACE/readline-install
+        ls -la $GITHUB_WORKSPACE/readline-install/lib
+
     - name: Archive build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: readline-aarch64-apple-ios
-        path: $GITHUB_WORKSPACE/readline-install
+        path: $GITHUB_WORKSPACE/readline-install/lib/*.a
